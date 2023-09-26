@@ -1,3 +1,4 @@
 .venv
 kafka-*
 keys*
+bootstrap.py
