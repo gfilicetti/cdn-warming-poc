@@ -29,7 +29,7 @@ if __name__ == '__main__':
         if err:
             print('ERROR: Message failed delivery: {}'.format(err))
         else:
-            print("Produced event to topic {topic}: key = {key:12} value = {value:12}".format(
+            print("Produced event to topic {topic}: key = {key} value = {value}".format(
                 topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8')))
 
     # Produce data by selecting random values from these lists.
