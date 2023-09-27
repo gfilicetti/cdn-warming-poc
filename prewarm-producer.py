@@ -35,7 +35,11 @@ if __name__ == '__main__':
     # Produce data by selecting random values from these lists.
     topic = "warming_urls"
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
-    urls = ['http://postman-echo.com/get?file=1', 'http://postman-echo.com/get?file=2', 'http://postman-echo.com/get?file=3', 'http://postman-echo.com/get?file=4', 'http://postman-echo.com/get?file=5']
+    urls = ['http://postman-echo.com/get?file=houseofdrag001.ts', 
+            'http://postman-echo.com/get?file=stateoftheunion.mp4', 
+            'http://postman-echo.com/get?file=mlb-bluejays-v-redsox.mpeg', 
+            'http://postman-echo.com/get?file=jeffcorwinexp0001.mp4', 
+            'http://postman-echo.com/get?file=tonysoprano-hottake.ts']
 
     index = 0
     for _ in range(args.count):
