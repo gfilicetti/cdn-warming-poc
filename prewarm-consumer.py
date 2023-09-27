@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import requests
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
@@ -45,9 +46,18 @@ if __name__ == '__main__':
             elif msg.error():
                 print("ERROR: %s".format(msg.error()))
             else:
-                # Extract the (optional) key and value, and print.
-                print("Consumed event from topic {topic}: key = {key:12} value = {value:22}".format(
-                    topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8')))
+                # exact the id and url from the message
+                id = msg.key().decode('utf-8')
+                url = msg.value().decode('utf-8')
+
+                # make a get call to the url and capture the response
+                response = requests.get(url)
+
+                print("===========================")
+                print(f"Status: {response.status_code}\n")
+                print(f"JSON: {response.json()}\n")
+                print(f"Text: {response.text}\n")
+
     except KeyboardInterrupt:
         pass
     finally:
