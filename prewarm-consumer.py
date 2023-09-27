@@ -53,7 +53,7 @@ if __name__ == '__main__':
                 # make a get call to the url and capture the response
                 response = requests.get(url)
 
-                print(f"Status: {response.status_code}; File: {response.json()['args']['file']}\n")
+                print(f"Status: {response.status_code}; File: {response.json()['args']['file']}")
 
     except KeyboardInterrupt:
         pass
