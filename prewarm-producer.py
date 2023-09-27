@@ -33,7 +33,7 @@ if __name__ == '__main__':
                 topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8')))
 
     # Produce data by selecting random values from these lists.
-    topic = "wbd-cdn-warming"
+    topic = "warming_urls"
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
     urls = ['http://postman-echo.com/get?file=1', 'http://postman-echo.com/get?file=2', 'http://postman-echo.com/get?file=3', 'http://postman-echo.com/get?file=4', 'http://postman-echo.com/get?file=5']
 
