@@ -10,7 +10,7 @@ if __name__ == '__main__':
     # Parse the command line.
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
-    parser.add_argument('count', default=10)
+    parser.add_argument('count', type=int, default=10)
     args = parser.parse_args()
 
     # Parse the configuration.
