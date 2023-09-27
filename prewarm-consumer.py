@@ -55,8 +55,7 @@ if __name__ == '__main__':
 
                 print("===========================")
                 print(f"Status: {response.status_code}\n")
-                print(f"JSON: {response.json()}\n")
-                print(f"Text: {response.text}\n")
+                print(f"File: {response.json().args.file}\n")
 
     except KeyboardInterrupt:
         pass
