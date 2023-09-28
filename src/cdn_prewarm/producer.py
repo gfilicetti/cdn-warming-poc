@@ -6,13 +6,7 @@ from configparser import ConfigParser
 from random import choice
 from confluent_kafka import Producer
 
-if __name__ == '__main__':
-    # Parse the command line.
-    parser = ArgumentParser()
-    parser.add_argument('config_file', type=FileType('r'))
-    parser.add_argument('count', type=int, default=10)
-    args = parser.parse_args()
-
+def main(args):
     # Parse the configuration.
     # See https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
     config_parser = ConfigParser()
@@ -53,3 +47,10 @@ if __name__ == '__main__':
     producer.poll(10000)
     producer.flush()
 
+if __name__ == '__main__':
+    # Parse the command line.
+    parser = ArgumentParser()
+    parser.add_argument('config_file', type=FileType('r'))
+    parser.add_argument('count', type=int, default=10)
+
+    main(parser.parse_args())

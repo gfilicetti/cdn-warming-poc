@@ -6,13 +6,7 @@ from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 
-if __name__ == '__main__':
-    # Parse the command line.
-    parser = ArgumentParser()
-    parser.add_argument('config_file', type=FileType('r'))
-    parser.add_argument('--reset', action='store_true')
-    args = parser.parse_args()
-
+def main(args):
     # Parse the configuration.
     # See https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
     config_parser = ConfigParser()
@@ -60,3 +54,11 @@ if __name__ == '__main__':
     finally:
         # Leave group and commit final offsets
         consumer.close()
+
+if __name__ == '__main__':
+    # Parse the command line.
+    parser = ArgumentParser()
+    parser.add_argument('config_file', type=FileType('r'))
+    parser.add_argument('--reset', action='store_true')
+
+    main(parser.parse_args())
