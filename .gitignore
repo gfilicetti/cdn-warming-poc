@@ -3,3 +3,4 @@ kafka-*
 keys*
 bootstrap.py
 *.ini
+__pycache__
