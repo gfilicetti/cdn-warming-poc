@@ -56,7 +56,9 @@ def main(args):
                 # make a get call to the url and capture the response
                 response = requests.get(url)
 
-                print(f"Status: {response.status_code}; File: {response.json()['args']['file']}")
+                log_text = f"Status: {response.status_code}; File: {response.json()['args']['file']}"
+                print(log_text)
+                logger.log_text(log_text)
 
     except KeyboardInterrupt:
         pass
