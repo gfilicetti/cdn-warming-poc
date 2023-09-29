@@ -6,6 +6,7 @@ from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from random import choice
 from confluent_kafka import Producer
+from google.cloud import logging
 
 def main(args):
     # Parse the configuration.
