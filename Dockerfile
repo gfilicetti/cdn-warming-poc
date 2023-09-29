@@ -1,11 +1,11 @@
 FROM python:3.9
 
-ADD src .
-ADD requirements.txt .
+COPY requirements.txt /
+COPY src/ /src/
 
 RUN pip install -r requirements.txt
 
 WORKDIR /src
 
-CMD [ "python", "-m", "cdn_prewarm.consumer", "settings.ini" ]
+CMD [ "python", "-u", "-m", "cdn_prewarm.consumer", "settings.ini" ]
 
