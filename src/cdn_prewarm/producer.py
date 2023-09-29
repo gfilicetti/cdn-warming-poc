@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import uuid
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from random import choice
@@ -13,8 +14,15 @@ def main(args):
     config_parser.read_file(args.config_file)
     config = dict(config_parser['default'])
 
+    # Create an ID for myself for logging purpose
+    my_id = uuid.uuid1()
+
     # Create Producer instance
     producer = Producer(config)
+
+    # Create Cloud Logging client
+    logging_client = logging.Client()
+    logger = logging_client.logger("cdn-warming-producer")
 
     # Optional per-message delivery callback (triggered by poll() or flush())
     # when a message has been successfully delivered or permanently
@@ -23,8 +31,10 @@ def main(args):
         if err:
             print('ERROR: Message failed delivery: {}'.format(err))
         else:
-            print("Produced event to topic {topic}: key = {key} value = {value}".format(
-                topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8')))
+            log_text = "Produced event to topic {topic}: key = {key} value = {value}".format(
+                topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8'))
+            print(log_text)
+            logger.log_text(log_text)
 
     # Produce data by selecting random values from these lists.
     topic = "warming_urls"

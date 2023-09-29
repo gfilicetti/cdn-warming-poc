@@ -2,9 +2,11 @@
 
 import sys
 import requests
+import uuid
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
+from google.cloud import logging
 
 def main(args):
     # Parse the configuration.
@@ -14,8 +16,15 @@ def main(args):
     config = dict(config_parser['default'])
     config.update(config_parser['consumer'])
 
+    # Create an ID for myself for logging purpose
+    my_id = uuid.uuid1()
+
     # Create Consumer instance
     consumer = Consumer(config)
+
+    # Create Cloud Logging client
+    logging_client = logging.Client()
+    logger = logging_client.logger("cdn-warming-consumer")
 
     # Set up a callback to handle the '--reset' flag.
     def reset_offset(consumer, partitions):
