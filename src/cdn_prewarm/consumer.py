@@ -15,6 +15,7 @@ app = Flask(__name__)
 
 @app.route("/ztatuz")
 def status():
+    print("I'm in ztatuz!!")
     return "OK"
 
 def main(config, reset):
@@ -77,6 +78,7 @@ def main(config, reset):
 
 if __name__ == '__main__':
     # Parse the command line.
+    print("About to parse args")
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
@@ -85,12 +87,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # get config settings
+    print("Now parsing config")
     config_parser = ConfigParser()
     config_parser.read_file(args.config_file)
     config = dict(config_parser['default'])
     config.update(config_parser['consumer'])
 
+    print("firing off the thread")
     thread = Thread(target=main, args=(config, args.reset))
     thread.start()
 
+    print("running the gunicorn")
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
