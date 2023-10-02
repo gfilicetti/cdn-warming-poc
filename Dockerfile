@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED True
 
 # Copy local code to the container image.
 COPY requirements.txt /
-COPY requirements.txt kafka-env /secret/
+COPY requirements.txt kafka-en[v] /secret/
 COPY src/ /src/
 
 # Install production dependencies.
