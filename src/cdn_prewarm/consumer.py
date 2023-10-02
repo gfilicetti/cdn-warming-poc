@@ -17,13 +17,13 @@ app = Flask(__name__)
 def status():
     return "OK"
 
-def main(args):
+def main(config, reset):
     # Parse the configuration.
     # See https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
-    config_parser = ConfigParser()
-    config_parser.read_file(args.config_file)
-    config = dict(config_parser['default'])
-    config.update(config_parser['consumer'])
+    # config_parser = ConfigParser()
+    # config_parser.read_file(args.config_file)
+    # config = dict(config_parser['default'])
+    # config.update(config_parser['consumer'])
 
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
@@ -37,7 +37,7 @@ def main(args):
 
     # Set up a callback to handle the '--reset' flag.
     def reset_offset(consumer, partitions):
-        if args.reset:
+        if reset:
             for p in partitions:
                 p.offset = OFFSET_BEGINNING
             consumer.assign(partitions)
@@ -81,8 +81,16 @@ if __name__ == '__main__':
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
 
-    thread = Thread(target=main, args=parser.parse_args())
-    thread.start()
     # main(parser.parse_args())
+    args = parser.parse_args()
+
+    # get config settings
+    config_parser = ConfigParser()
+    config_parser.read_file(args.config_file)
+    config = dict(config_parser['default'])
+    config.update(config_parser['consumer'])
+
+    thread = Thread(target=main, args=(config, args.reset))
+    thread.start()
 
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
