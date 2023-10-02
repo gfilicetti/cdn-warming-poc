@@ -9,6 +9,7 @@ from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from google.cloud import logging
 from flask import Flask
+from threading import Thread
 
 app = Flask(__name__)
 
@@ -80,6 +81,8 @@ if __name__ == '__main__':
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
 
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    thread = Thread(target=main, args=parser.parse_args())
+    thread.start()
+    # main(parser.parse_args())
 
-    main(parser.parse_args())
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
