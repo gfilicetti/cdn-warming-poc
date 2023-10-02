@@ -34,6 +34,7 @@ def main(config, reset):
 
     # Create Cloud Logging client
     logging_client = logging.Client()
+    logging_client.setup_logging()
     logger = logging_client.logger("cdn-warming-consumer")
 
     # Set up a callback to handle the '--reset' flag.
