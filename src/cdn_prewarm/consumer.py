@@ -78,9 +78,11 @@ def main(config, reset):
         consumer.close()
 
 if __name__ == '__main__':
+    # Print the current folder contents
+    print(f"Current folder:\n {os.listdir()}\n")
+
     # Parse the command line.
     print("About to parse args")
-    os.listdir()
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
