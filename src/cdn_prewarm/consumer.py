@@ -80,6 +80,7 @@ def main(config, reset):
 if __name__ == '__main__':
     # Parse the command line.
     print("About to parse args")
+    os.listdir()
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
