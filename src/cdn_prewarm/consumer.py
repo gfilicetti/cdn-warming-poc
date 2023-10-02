@@ -80,6 +80,7 @@ def main(config, reset):
 if __name__ == '__main__':
     # Print the current folder contents
     print(f"Current folder:\n {os.listdir()}\n")
+    print(f"Secrets:\n {os.listdir('/secret')}\n")
 
     # Parse the command line.
     print("About to parse args")
