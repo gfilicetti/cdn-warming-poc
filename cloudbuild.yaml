@@ -5,6 +5,15 @@ steps:
   args: [ 'push', 'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-container:latest' ]
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
-  args: [ 'run', 'deploy', 'cdn-prewarm', '--image', 'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-container:latest', '--region', 'us-central1' ]
+  args: [ 'run', 
+          'deploy', 
+          'cdn-prewarm', 
+          '--image', 
+          'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-container:latest', 
+          '--region', 
+          'us-central1',
+          '--platform', 
+          'managed', 
+          '--allow-unauthenticated' ]
 images:
 - 'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-container:latest'
