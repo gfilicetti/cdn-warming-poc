@@ -13,8 +13,7 @@ COPY src/ /src/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # set our context
-ENV APP_HOME /src
-WORKDIR $APP_HOME
+WORKDIR /src
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
