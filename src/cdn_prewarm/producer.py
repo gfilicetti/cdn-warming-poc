@@ -32,8 +32,8 @@ def main(args):
         if err:
             print('ERROR: Message failed delivery: {}'.format(err))
         else:
-            log_text = "Produced event to topic {topic}: key = {key} value = {value}".format(
-                topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8'))
+            log_text = "{id} - Produced event to topic {topic}: key = {key} value = {value}".format(
+                id=my_id, topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8'))
             print(log_text)
             logger.log_text(log_text)
 

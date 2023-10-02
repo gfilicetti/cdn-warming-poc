@@ -56,7 +56,7 @@ def main(args):
                 # make a get call to the url and capture the response
                 response = requests.get(url)
 
-                log_text = f"Status: {response.status_code}; File: {response.json()['args']['file']}"
+                log_text = f"{my_id} - Status: {response.status_code}; File: {response.json()['args']['file']}"
                 print(log_text)
                 logger.log_text(log_text)
 
