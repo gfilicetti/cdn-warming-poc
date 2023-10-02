@@ -1,3 +1,5 @@
 confluent_kafka
 requests
 google-cloud-logging
+flask
+gunicorn

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import requests
 import uuid
@@ -7,6 +8,13 @@ from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from google.cloud import logging
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/ztatuz")
+def status():
+    return "OK"
 
 def main(args):
     # Parse the configuration.
@@ -56,7 +64,7 @@ def main(args):
                 # make a get call to the url and capture the response
                 response = requests.get(url)
 
-                log_text = f">>{my_id} - Status: {response.status_code}; File: {response.json()['args']['file']}"
+                log_text = f"{my_id} - Status: {response.status_code}; File: {response.json()['args']['file']}"
                 print(log_text)
                 logger.log_text(log_text)
 
@@ -71,5 +79,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
+
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 
     main(parser.parse_args())
