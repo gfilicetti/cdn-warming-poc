@@ -6,13 +6,15 @@ FROM python:3.11-slim
 ENV PYTHONUNBUFFERED True
 
 # Copy local code to the container image.
-ENV APP_HOME /src
-WORKDIR $APP_HOME
 COPY requirements.txt /
 COPY src/ /src/
 
 # Install production dependencies.
 RUN pip install --no-cache-dir -r requirements.txt
+
+# set our context
+ENV APP_HOME /src
+WORKDIR $APP_HOME
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
