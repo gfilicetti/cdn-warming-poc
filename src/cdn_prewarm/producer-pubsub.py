@@ -8,11 +8,6 @@ from confluent_kafka import Producer
 from google.cloud import logging, pubsub_v1
 
 def main(args):
-    # Parse the configuration.
-    # See https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
-    config_parser = ConfigParser()
-    config_parser.read_file(args.config_file)
-    config = dict(config_parser['default'])
 
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
@@ -70,7 +65,6 @@ def main(args):
 if __name__ == '__main__':
     # Parse the command line.
     parser = ArgumentParser()
-    parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('count', type=int, default=10)
 
     main(parser.parse_args())
