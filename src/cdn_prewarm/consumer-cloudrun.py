@@ -1,19 +1,28 @@
 #!/usr/bin/env python
 
+import os
 import requests
 import uuid
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from google.cloud import logging
+from flask import Flask
+from threading import Thread
 
-def main(args):
+app = Flask(__name__)
+
+@app.route("/ztatuz")
+def status():
+    return "OK"
+
+def main(config, reset):
     # Parse the configuration.
     # See https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
-    config_parser = ConfigParser()
-    config_parser.read_file(args.config_file)
-    config = dict(config_parser['default'])
-    config.update(config_parser['consumer'])
+    # config_parser = ConfigParser()
+    # config_parser.read_file(args.config_file)
+    # config = dict(config_parser['default'])
+    # config.update(config_parser['consumer'])
 
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
@@ -28,7 +37,7 @@ def main(args):
 
     # Set up a callback to handle the '--reset' flag.
     def reset_offset(consumer, partitions):
-        if args.reset:
+        if reset:
             for p in partitions:
                 p.offset = OFFSET_BEGINNING
             consumer.assign(partitions)
@@ -67,9 +76,30 @@ def main(args):
         consumer.close()
 
 if __name__ == '__main__':
+    # Print the current folder contents if we're debugging
+    # print(f"Current folder:\n {os.listdir()}\n")
+    # try:
+    #     print(f"Secrets:\n {os.listdir('/secret')}\n")
+    # except FileNotFoundError:
+    #     print("No secrets folder")
+
     # Parse the command line.
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
     parser.add_argument('--reset', action='store_true')
 
-    main(parser.parse_args())
+    # main(parser.parse_args())
+    args = parser.parse_args()
+
+    # get config settings
+    config_parser = ConfigParser()
+    config_parser.read_file(args.config_file)
+    config = dict(config_parser['default'])
+    config.update(config_parser['consumer'])
+
+    # fire off a thread to listen to kafka
+    thread = Thread(target=main, args=(config, args.reset))
+    thread.start()
+
+    # start a server to listen for requests because Cloud Run demands it
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
