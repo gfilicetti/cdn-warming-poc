@@ -81,9 +81,9 @@ if __name__ == '__main__':
     # Print the current folder contents
     print(f"Current folder:\n {os.listdir()}\n")
     try:
-        print(f"Secrets:\n {os.listdir('/secret') | 'None'}\n")
-    finally:
-        print("")
+        print(f"Secrets:\n {os.listdir('/secret')}\n")
+    except FileNotFoundError:
+        print("No secrets folder")
 
     # Parse the command line.
     print("About to parse args")
