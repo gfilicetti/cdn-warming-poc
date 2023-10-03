@@ -1,5 +1,6 @@
 confluent_kafka
 requests
 google-cloud-logging
+google-cloud-pubsub
 flask
 gunicorn
