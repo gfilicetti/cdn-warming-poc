@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sys
 import uuid
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
