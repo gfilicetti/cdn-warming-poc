@@ -54,7 +54,7 @@ def main(args):
         url = choice(urls)
 
         # Data sent to Cloud Pub/Sub must be a bytestring.
-        data = b"{url}".format(url=url)
+        data = url.encode("utf-8")
 
         # When you publish a message, the client returns a future.
         api_future = client.publish(topic_path, data)
