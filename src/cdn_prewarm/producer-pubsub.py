@@ -60,8 +60,8 @@ def main(args):
         api_future = client.publish(topic_path, data)
         message_id = api_future.result()
 
-        log_text = "{id} - Published event to topic {topic}: value = {value}".format(
-            id=my_id, topic=topic_path, value=message_id)
+        log_text = "{id} - Published event to topic {topic}: value = {value}, message = {message}".format(
+            id=my_id, topic=topic_path, value=data, message=message_id)
         print(log_text)
         logger.log_text(log_text)
 
