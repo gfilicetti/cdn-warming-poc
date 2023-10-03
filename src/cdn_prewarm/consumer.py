@@ -29,6 +29,8 @@ def main(config, reset):
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
 
+    print(f"Starting main, uuid: {my_id}")
+
     # Create Consumer instance
     consumer = Consumer(config)
 
