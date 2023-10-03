@@ -8,12 +8,13 @@ gcloud iam service-accounts create cloud-run-pubsub-invoker \
     --display-name "Cloud Run Pub/Sub Invoker"
 
 # give the new SA cloud run invoker privs
-gcloud run services add-iam-policy-binding cdn-warming-poc \
+gcloud run services add-iam-policy-binding cdn-prewarm-pubsub \
     --member=serviceAccount:cloud-run-pubsub-invoker@cdn-warming-poc.iam.gserviceaccount.com \
-    --role=roles/run.invoker
+    --role=roles/run.invoker \
+    --region=us-central1
 
 # give pub sub the account token creator privs
-gcloud projects add-iam-policy-binding cdn-warming-poc \
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
    --member=serviceAccount:service-1034328539074@gcp-sa-pubsub.iam.gserviceaccount.com \
    --role=roles/iam.serviceAccountTokenCreator
 
