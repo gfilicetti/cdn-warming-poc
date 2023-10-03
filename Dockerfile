@@ -7,8 +7,11 @@ ENV PYTHONUNBUFFERED True
 
 # Copy local code to the container image.
 COPY requirements.txt /
-COPY requirements.txt src/kafka-en[v] /secret/
 COPY src/ /src/
+# This crazy copy is needed in case kafka-env isn't present, it will give an error
+# but not if there is another file being copied and not if it's a wildcard glob
+# versus an exact reference
+COPY requirements.txt src/kafka-en[v] /secret/
 
 # Install production dependencies.
 RUN pip install --no-cache-dir -r requirements.txt

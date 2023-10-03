@@ -31,9 +31,11 @@ def main(config, reset):
 
     # Create Consumer instance
     consumer = Consumer(config)
+    print(config)
+    print(config.project)
 
     # Create Cloud Logging client
-    logging_client = logging.Client()
+    logging_client = logging.Client(project=config.project)
     logging_client.setup_logging()
     logger = logging_client.logger("cdn-warming-consumer")
 
