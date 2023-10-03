@@ -67,10 +67,6 @@ def main(args):
 
         index += 1
 
-    # Block until the messages are sent.
-    producer.poll(10000)
-    producer.flush()
-
 if __name__ == '__main__':
     # Parse the command line.
     parser = ArgumentParser()
