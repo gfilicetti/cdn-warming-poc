@@ -14,7 +14,7 @@ from threading import Thread
 app = Flask(__name__)
 
 @app.route("/", methods=["POST"])
-def main(config, reset):
+def main():
 
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
@@ -22,7 +22,7 @@ def main(config, reset):
     # Create Cloud Logging client
     logging_client = logging.Client(project='cdn-warming-poc')
     logging_client.setup_logging()
-    logger = logging_client.logger("cdn-warming-consumer")
+    logger = logging_client.logger("cdn-warming-consumer-pubsub")
 
     # Receive pub/sub message
     envelope = request.get_json()

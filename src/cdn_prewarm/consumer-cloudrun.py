@@ -33,7 +33,7 @@ def main(config, reset):
     # Create Cloud Logging client
     logging_client = logging.Client(project='cdn-warming-poc')
     logging_client.setup_logging()
-    logger = logging_client.logger("cdn-warming-consumer")
+    logger = logging_client.logger("cdn-warming-consumer-kafka")
 
     # Set up a callback to handle the '--reset' flag.
     def reset_offset(consumer, partitions):

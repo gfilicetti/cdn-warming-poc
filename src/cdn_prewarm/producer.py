@@ -23,7 +23,7 @@ def main(args):
     # Create Cloud Logging client
     logging_client = logging.Client()
     logging_client.setup_logging()
-    logger = logging_client.logger("cdn-warming-producer")
+    logger = logging_client.logger("cdn-warming-producer-kafka")
 
     # Optional per-message delivery callback (triggered by poll() or flush())
     # when a message has been successfully delivered or permanently
