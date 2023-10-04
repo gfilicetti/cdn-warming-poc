@@ -28,13 +28,17 @@ def main():
     envelope = request.get_json()
     if not envelope:
         msg = "No Pub/Sub message received"
-        print(f"Error: {msg}")
-        return (f"Bad Request: {msg}", 400)
+        log_text = f"Bad Request: {msg}"
+        print(log_text)
+        logger.log_text(log_text)
+        return (log_text, 400)
 
     if not isinstance(envelope, dict) or "message" not in envelope:
         msg = "Invalid Pub/Sub message format"
-        print(f"Error: {msg}")
-        return (f"Bad Request: {msg}", 400)
+        log_text = f"Bad Request: {msg}"
+        print(log_text)
+        logger.log_text(log_text)
+        return (log_text, 400)
 
     pubsub_message = envelope["message"]
 
@@ -48,8 +52,10 @@ def main():
         log_text = f"{my_id} - Status: {response.status_code}; File: {response.json()['args']['file']}"
         print(log_text)
         logger.log_text(log_text)
-        return ("", 204)
+        return (log_text, 204)
     else:
         msg = "No data in the Pub/Sub message"
-        print(f"Error: {msg}")
-        return (f"Bad Request: {msg}", 400)
+        log_text = f"Bad Request: {msg}"
+        print(log_text)
+        logger.log_text(log_text)
+        return (log_text, 400)
