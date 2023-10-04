@@ -20,6 +20,7 @@ gcloud iam service-accounts create cloudrun-pubsub-invoker \
 # give pub sub the account token creator privs
 gcloud projects add-iam-policy-binding $PROJECT \
    --member=serviceAccount:service-$PROJECT_NUM@gcp-sa-pubsub.iam.gserviceaccount.com \
+   --condition=None \
    --role=roles/iam.serviceAccountTokenCreator
 
    
