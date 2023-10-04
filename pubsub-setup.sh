@@ -1,7 +1,15 @@
 #!/bin/bash
+# This script will set up the pub/sub topic and create the service account and bindings
+# pubsub-setup.sh {topic_name} {project_name}
+
+TOPIC=${1:-"warming_urls"}
+PROJECT=${2:-$(gcloud config get project)}
+
+printf "Using topic: ${TOPIC}"
+printf "Using project: ${PROJECT}"
 
 # create the topic we'll be using
-gcloud pubsub topics create warming_urls
+gcloud pubsub topics create $TOPIC
 
 # create an SA specifically for calling CR upon new P/S messages
 gcloud iam service-accounts create cloud-run-pubsub-invoker \
@@ -9,18 +17,11 @@ gcloud iam service-accounts create cloud-run-pubsub-invoker \
 
 # give the new SA cloud run invoker privs
 gcloud run services add-iam-policy-binding cdn-prewarm-pubsub \
-    --member=serviceAccount:cloud-run-pubsub-invoker@cdn-warming-poc.iam.gserviceaccount.com \
+    --member=serviceAccount:cloud-run-pubsub-invoker@$PROJECT.iam.gserviceaccount.com \
     --role=roles/run.invoker \
     --region=us-central1
 
 # give pub sub the account token creator privs
-gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+gcloud projects add-iam-policy-binding $PROJECT \
    --member=serviceAccount:service-1034328539074@gcp-sa-pubsub.iam.gserviceaccount.com \
    --role=roles/iam.serviceAccountTokenCreator
-
-gcloud pubsub subscriptions create us-west4 --topic warming_urls \
-    --ack-deadline=600 \
-    --push-endpoint=https://cdn-prewarm-pubsub-7amek6gxsq-uc.a.run.app/ \
-    --push-auth-service-account=cloud-run-pubsub-invoker@cdn-warming-poc.iam.gserviceaccount.com
-
-
