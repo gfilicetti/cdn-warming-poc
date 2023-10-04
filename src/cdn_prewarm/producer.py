@@ -41,11 +41,11 @@ def main(args):
     # topic = "warming_urls"
     topic = "warming_2"
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
-    urls = ['http://postman-echo.com/get?file=houseofdrag001.ts', 
-            'http://postman-echo.com/get?file=stateoftheunion.mp4', 
-            'http://postman-echo.com/get?file=mlb-bluejays-v-redsox.mpeg', 
-            'http://postman-echo.com/get?file=jeffcorwinexp0001.mp4', 
-            'http://postman-echo.com/get?file=tonysoprano-hottake.ts']
+    urls = ['http://postman-echo.com/get?file=houseofdragonsS01E01-001.ts', 
+            'http://postman-echo.com/get?file=stateoftheunion20231004.mp4', 
+            'http://postman-echo.com/get?file=mlb-bluejays-v-redsox-GAME1011.mpeg', 
+            'http://postman-echo.com/get?file=jeffcorwinexpS12E01-050.mp4', 
+            'http://postman-echo.com/get?file=tonysoprano-intro-012.ts']
 
     index = 0
     for _ in range(args.count):

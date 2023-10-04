@@ -32,11 +32,11 @@ def main(args):
     # Produce data by selecting random values from these lists.
     topic = "warming_urls"
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
-    urls = ['http://postman-echo.com/get?file=houseofdrag001.ts', 
-            'http://postman-echo.com/get?file=stateoftheunion.mp4', 
-            'http://postman-echo.com/get?file=mlb-bluejays-v-redsox.mpeg', 
-            'http://postman-echo.com/get?file=jeffcorwinexp0001.mp4', 
-            'http://postman-echo.com/get?file=tonysoprano-hottake.ts']
+    urls = ['http://postman-echo.com/get?file=houseofdragonsS01E01-001.ts', 
+            'http://postman-echo.com/get?file=stateoftheunion20231004.mp4', 
+            'http://postman-echo.com/get?file=mlb-bluejays-v-redsox-GAME1011.mpeg', 
+            'http://postman-echo.com/get?file=jeffcorwinexpS12E01-050.mp4', 
+            'http://postman-echo.com/get?file=tonysoprano-intro-012.ts']
 
     # Initialize a Publisher client.
     client = pubsub_v1.PublisherClient()
