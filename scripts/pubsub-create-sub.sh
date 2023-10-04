@@ -16,6 +16,4 @@ printf "Using project: ${PROJECT} \n"
 gcloud pubsub subscriptions create $SUB --topic $TOPIC \
     --ack-deadline=600 \
     --push-endpoint=$ENDPOINT \
-    --push-auth-service-account=cloud-run-pubsub-invoker@$PROJECT.iam.gserviceaccount.com
-
-
+    --push-auth-service-account=cloudrun-pubsub-invoker@$PROJECT.iam.gserviceaccount.com
