@@ -3,7 +3,11 @@
 # pubsub-cloud-run.sh {region} {image} {cloudrun_service_name}
 REGION=${1:-"us-central1"}
 IMAGE=${2:-"us-central1-docker.pkg.dev/cdn-warming-poc/registry-docker/cdn-prewarm-container"}
-SERVICE=${3:-"cdn-prewarm"}
+SERVICE=${3:-"cdn-prewarm-us-central1"}
+
+printf "Using region: ${REGION} \n"
+printf "Using image: ${IMAGE} \n"
+printf "Using cloud run service: ${SERVICE} \n"
 
 gcloud run deploy $SERVICE \
     --image=$IMAGE:latest \

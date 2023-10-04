@@ -1,16 +1,18 @@
 #!/bin/bash
 # This script will set up the pub/sub topic and create the service account and bindings
-# pubsub-setup.sh {topic_name} {project_name} {policy_region}
+# pubsub-setup.sh {topic_name} {project_name} {cloudrun_service_name} {policy_region}
 
 TOPIC=${1:-"warming_urls"}
 PROJECT=${2:-$(gcloud config get project)}
-REGION=${3:-"us-central1"}
+CLOUDRUN=${3:-"cdn-prewarm-us-central1"}
+REGION=${4:-"us-central1"}
 PROJECT_NUM=$(gcloud projects describe $PROJECT --format="value(projectNumber)")
 
-printf "Using topic: ${TOPIC}"
-printf "Using project: ${PROJECT}"
-printf "Using policy region: ${REGION}"
-printf "Using project number: ${PROJECT_NUM}"
+printf "Using topic: ${TOPIC} \n"
+printf "Using project: ${PROJECT} \n"
+printf "Using cloud run service: ${CLOUDRUN} \n"
+printf "Using policy region: ${REGION} \n"
+printf "Using project number: ${PROJECT_NUM} \n"
 
 # first create the topic
 gcloud pubsub topics create $TOPIC
@@ -20,7 +22,7 @@ gcloud iam service-accounts create cloudrun-pubsub-invoker \
     --display-name "Cloud Run Pub/Sub Invoker"
 
 # give the new SA cloud run invoker privs
-gcloud run services add-iam-policy-binding cloudrun-invoking-perms \
+gcloud run services add-iam-policy-binding $CLOUDRUN \
     --member=serviceAccount:cloudrun-pubsub-invoker@$PROJECT.iam.gserviceaccount.com \
     --role=roles/run.invoker \
     --region=$REGION
