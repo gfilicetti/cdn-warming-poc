@@ -30,13 +30,20 @@ options=PipelineOptions([
 
 with beam.Pipeline(options=options) as p:
 
+    # Murat's config
+    # kafka_config = {
+    #     "bootstrap.servers": "10.164.0.24:9092"
+    # }
+
     kafka_config = {
         "bootstrap.servers": "pkc-n3603.us-central1.gcp.confluent.cloud:9092",
-        "sasl.username": "RXKZZPZHVYNU2XAJ",
-        "sasl.password": "NhQ6zSqNh5C5a2Yup8Xfaa8E7MueU303MU4n8guxrk0W4D8EPyfxmcarrSUhu6KK",
         "security.protocol": "SASL_SSL",
-        "sasl.mechanisms": "PLAIN"
+        "sasl.mechanism": "PLAIN",
+        "group.id": "cdn_prewarm_group",
+        "sasl.jaas.config":f'org.apache.kafka.common.security.plain.PlainLoginModule required serviceName="Kafka" username="RXKZZPZHVYNU2XAJ" password="NhQ6zSqNh5C5a2Yup8Xfaa8E7MueU303MU4n8guxrk0W4D8EPyfxmcarrSUhu6KK";',
+        "auto.offset.reset": "earliest"
     }
+
     records = (p 
         | "Read from source" >> ReadFromKafka(consumer_config=kafka_config, topics=["warming_urls"])
         | "Extract the value" >> beam.Map(lambda x: x[1])
