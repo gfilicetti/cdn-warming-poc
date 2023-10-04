@@ -13,7 +13,7 @@ printf "Using endpoint: ${ENDPOINT}"
 printf "Using project: ${PROJECT}"
 
 # create the subscription to push to cloud run endpoint
-gcloud pubsub subscriptions create ${SUB} --topic $TOPIC \
+gcloud pubsub subscriptions create $SUB --topic $TOPIC \
     --ack-deadline=600 \
     --push-endpoint=$ENDPOINT \
     --push-auth-service-account=cloud-run-pubsub-invoker@$PROJECT.iam.gserviceaccount.com
