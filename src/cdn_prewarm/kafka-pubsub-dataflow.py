@@ -39,13 +39,13 @@ with beam.Pipeline(options=options) as p:
         "bootstrap.servers": "pkc-n3603.us-central1.gcp.confluent.cloud:9092",
         "security.protocol": "SASL_SSL",
         "sasl.mechanism": "PLAIN",
-        "group.id": "cdn_prewarm_group",
-        "sasl.jaas.config":f'org.apache.kafka.common.security.plain.PlainLoginModule required serviceName="Kafka" username="RXKZZPZHVYNU2XAJ" password="NhQ6zSqNh5C5a2Yup8Xfaa8E7MueU303MU4n8guxrk0W4D8EPyfxmcarrSUhu6KK";',
-        "auto.offset.reset": "earliest"
+        # "group.id": "cdn_prewarm_group",
+        # "auto.offset.reset": "earliest",
+        "sasl.jaas.config":f'org.apache.kafka.common.security.plain.PlainLoginModule required serviceName="Kafka" username="RXKZZPZHVYNU2XAJ" password="NhQ6zSqNh5C5a2Yup8Xfaa8E7MueU303MU4n8guxrk0W4D8EPyfxmcarrSUhu6KK";'
     }
 
     records = (p 
-        | "Read from source" >> ReadFromKafka(consumer_config=kafka_config, topics=["warming_urls"])
+        | "Read from source" >> ReadFromKafka(consumer_config=kafka_config, topics=["warming_2"])
         | "Extract the value" >> beam.Map(lambda x: x[1])
         | "Write to destination" >> WriteToPubSub(topic="projects/cdn-warming-poc/topics/warming_urls")
     )

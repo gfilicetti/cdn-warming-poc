@@ -38,7 +38,8 @@ def main(args):
             logger.log_text(log_text)
 
     # Produce data by selecting random values from these lists.
-    topic = "warming_urls"
+    # topic = "warming_urls"
+    topic = "warming_2"
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
     urls = ['http://postman-echo.com/get?file=houseofdrag001.ts', 
             'http://postman-echo.com/get?file=stateoftheunion.mp4', 
