@@ -1,14 +1,14 @@
 #!/bin/bash
 # This script will deploy a new cloud run in the region passed in 
-# pubsub-cloud-run.sh {region} {image} {cloudrun_service_name} {project}
-REGION=${1:-"us-central1"}
-IMAGE=${2:-"us-central1-docker.pkg.dev/cdn-warming-poc/registry-docker/cdn-prewarm-pubsub"}
-SERVICE=${3:-"cdn-prewarm-us-central1"}
+# pubsub-cloud-run.sh {cloudrun_service_name} {region} {image} {project}
+SERVICE=${1:-"cdn-prewarm-us-central1"}
+REGION=${2:-"us-central1"}
+IMAGE=${3:-"us-central1-docker.pkg.dev/cdn-warming-poc/registry-docker/cdn-prewarm-pubsub"}
 PROJECT=${4:-$(gcloud config get project)}
 
+printf "Using cloud run service name: ${SERVICE} \n"
 printf "Using region: ${REGION} \n"
 printf "Using image: ${IMAGE} \n"
-printf "Using cloud run service: ${SERVICE} \n"
 printf "Using project: ${PROJECT} \n"
 
 # create the new cloud run service
