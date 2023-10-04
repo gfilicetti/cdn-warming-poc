@@ -17,6 +17,12 @@ gcloud pubsub topics create $TOPIC
 gcloud iam service-accounts create cloudrun-pubsub-invoker \
     --display-name "Cloud Run Pub/Sub Invoker"
 
+# give compute the pub/sub publisher perms
+gcloud projects add-iam-policy-binding $PROJECT \
+    --member="serviceAccount:$PROJECT_NUM-compute@developer.gserviceaccount.com" \
+    --condition="None" \
+    --role="roles/pubsub.publisher"
+
 # give pub sub the account token creator privs
 gcloud projects add-iam-policy-binding $PROJECT \
    --member=serviceAccount:service-$PROJECT_NUM@gcp-sa-pubsub.iam.gserviceaccount.com \
