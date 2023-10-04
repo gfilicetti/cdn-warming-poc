@@ -38,8 +38,6 @@ def main(args):
             logger.log_text(log_text)
 
     # Produce data by selecting random values from these lists.
-    # topic = "warming_urls"
-    topic = "warming_2"
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
     urls = ['http://postman-echo.com/get?file=houseofdragonsS01E01-001.ts', 
             'http://postman-echo.com/get?file=stateoftheunion20231004.mp4', 
@@ -52,7 +50,7 @@ def main(args):
 
         id = choice(ids)
         url = choice(urls)
-        producer.produce(topic, key=id, value=url, callback=delivery_callback)
+        producer.produce(args.topic, key=id, value=url, callback=delivery_callback)
         index += 1
 
     # Block until the messages are sent.
@@ -63,6 +61,7 @@ if __name__ == '__main__':
     # Parse the command line.
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
+    parser.add_argument('topic')
     parser.add_argument('count', type=int, default=10)
 
     main(parser.parse_args())
