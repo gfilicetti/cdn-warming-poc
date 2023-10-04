@@ -4,3 +4,4 @@ google-cloud-logging
 google-cloud-pubsub
 flask
 gunicorn
+apache-beam[gcp]
