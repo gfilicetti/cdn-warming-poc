@@ -1,13 +1,20 @@
 import datetime
 import warnings
+from argparse import ArgumentParser, FileType
+from configparser import ConfigParser
 
 import apache_beam as beam
-
 from apache_beam.io import WriteToPubSub
 from apache_beam.io.kafka import ReadFromKafka
 from apache_beam.options.pipeline_options import PipelineOptions
 
-def main():
+def main(args):
+    # get config settings
+    config_parser = ConfigParser()
+    config_parser.read_file(args.config_file)
+    config = dict(config_parser['default'])
+    config.update(config_parser['consumer'])
+
     warnings.filterwarnings("ignore")
 
     project_id="cdn-warming-poc"
@@ -31,26 +38,38 @@ def main():
 
     with beam.Pipeline(options=options) as p:
 
-        # Murat's config
-        # kafka_config = {
-        #     "bootstrap.servers": "10.164.0.24:9092"
-        # }
-
         kafka_config = {
-            "bootstrap.servers": "pkc-n3603.us-central1.gcp.confluent.cloud:9092",
-            "security.protocol": "SASL_SSL",
-            "sasl.mechanism": "PLAIN",
-            # "group.id": "cdn_prewarm_group",
-            # "auto.offset.reset": "earliest",
-            "sasl.jaas.config":f'org.apache.kafka.common.security.plain.PlainLoginModule required serviceName="Kafka" username="RXKZZPZHVYNU2XAJ" password="NhQ6zSqNh5C5a2Yup8Xfaa8E7MueU303MU4n8guxrk0W4D8EPyfxmcarrSUhu6KK";'
+            "bootstrap.servers": config['bootstrap.servers'],
+            "security.protocol": config['security.protocol'],
+            # NOTE!!!!!! The config for this job needs 'mechanism' singular but the kafka.env
+            # config file needs it to be 'mechanisms' plural. THIS IS INTENTIONAL!
+            "sasl.mechanism": config['sasl.mechanisms'],
+            "group.id": config['group.id'],
+            "auto.offset.reset": config['auto.offset.reset'],
+
+            # This is setting is for JAAS setup only, only the user and pw are in the kafka-env file
+            "sasl.jaas.config": f'org.apache.kafka.common.security.plain.PlainLoginModule required serviceName="Kafka" username={config["sasl.username"]} password={config["sasl.password"]};'
         }
 
         records = (p 
-            | "Read from source" >> ReadFromKafka(consumer_config=kafka_config, topics=["warming_2"])
+            | "Read from source" >> ReadFromKafka(consumer_config=kafka_config, topics=[args.kafka_topic])
             | "Extract the value" >> beam.Map(lambda x: x[1])
-            | "Write to destination" >> WriteToPubSub(topic="projects/cdn-warming-poc/topics/warming_urls")
+            | "Write to destination" >> WriteToPubSub(topic=args.pubsub_topic)
         )
 
 if __name__ == '__main__':
-    main()
+    # Parse the command line.
+    parser = ArgumentParser()
+
+    # path to a file with kafka environment settings
+    parser.add_argument('config_file', type=FileType('r'))
+
+    # just a plain name, like: 'warming_urls'
+    parser.add_argument('kafka_topic')
+
+    # the full path, like: 'projects/cdn-warming-poc/topics/warming_urls'
+    parser.add_argument('pubsub_topic')
+    args = parser.parse_args()
+
+    main(args)
 
