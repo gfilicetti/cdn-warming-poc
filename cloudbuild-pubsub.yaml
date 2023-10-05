@@ -3,17 +3,17 @@ steps:
   args: [ 'build', '-f', 'Dockerfile-pubsub', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-pubsub:latest', '.' ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'push', 'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-pubsub:latest' ]
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: [ 'run', 
-          'deploy', 
-          'cdn-prewarm-pubsub', 
-          '--image', 
-          'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-pubsub:latest', 
-          '--region', 
-          'us-central1',
-          '--platform', 
-          'managed', 
-          '--allow-unauthenticated' ]
+# - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#   entrypoint: gcloud
+#   args: [ 'run', 
+#           'deploy', 
+#           'cdn-prewarm-pubsub', 
+#           '--image', 
+#           'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-pubsub:latest', 
+#           '--region', 
+#           'us-central1',
+#           '--platform', 
+#           'managed', 
+#           '--allow-unauthenticated' ]
 images:
 - 'us-central1-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-pubsub:latest'
