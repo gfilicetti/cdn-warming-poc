@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import os
 import requests
 import uuid
 import base64
+import socket
 from google.cloud import logging
 from flask import Flask, request
 from threading import Thread
@@ -16,7 +16,7 @@ app = Flask(__name__)
 @app.route("/", methods=["POST"])
 def main():
 
-    print("1. Top of main")
+    print(f"1. Top of main, host: {socket.gethostname()}")
 
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
