@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+# This script will create messages with 1 of 5 random URLs and push them to Kafka
+# python -m cdn_prewarm.producer { config_file } { kafka_topic } { count }
+# eg: python -m cdn_prewarm.producer kafka-env cdn_warming 1000
 
-import uuid
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from random import choice
 from confluent_kafka import Producer
-from google.cloud import logging
 
 def main(args):
     # Parse the configuration.
@@ -14,16 +14,8 @@ def main(args):
     config_parser.read_file(args.config_file)
     config = dict(config_parser['default'])
 
-    # Create an ID for myself for logging purpose
-    my_id = uuid.uuid1()
-
     # Create Producer instance
     producer = Producer(config)
-
-    # Create Cloud Logging client
-    logging_client = logging.Client()
-    logging_client.setup_logging()
-    logger = logging_client.logger("cdn-warming-producer-kafka")
 
     # Optional per-message delivery callback (triggered by poll() or flush())
     # when a message has been successfully delivered or permanently
@@ -32,10 +24,9 @@ def main(args):
         if err:
             print('ERROR: Message failed delivery: {}'.format(err))
         else:
-            log_text = "{id} - Produced event to topic {topic}: key = {key} value = {value}".format(
-                id=my_id, topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8'))
+            log_text = "Message to topic {topic}: key = {key} value = {value}".format(
+                topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8'))
             print(log_text)
-            logger.log_text(log_text)
 
     # Produce data by selecting random values from these lists.
     ids = ['0001', '0002', '0003', '0014', '0050', '0024']
@@ -47,7 +38,6 @@ def main(args):
 
     index = 0
     for _ in range(args.count):
-
         id = choice(ids)
         url = choice(urls)
         producer.produce(args.topic, key=id, value=url, callback=delivery_callback)
