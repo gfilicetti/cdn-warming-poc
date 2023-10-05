@@ -1,11 +1,12 @@
-#!/usr/bin/env python
+# This script will block and loop listening for messages on the Kafka topic and then will call the URL
+# -- NOTE: This is meant to be run locally for testing
+# python -m cdn_prewarm.consumer-kafka { config_file } { kafka_topic } { project_id }
+# eg: python -m cdn_prewarm.consumer-kafka kafka-env cdn_warming cdn-warming-poc-project
 
 import requests
-import uuid
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
 from confluent_kafka import Consumer, OFFSET_BEGINNING
-from google.cloud import logging
 
 def main(args):
     # Parse the configuration.
@@ -15,16 +16,8 @@ def main(args):
     config = dict(config_parser['default'])
     config.update(config_parser['consumer'])
 
-    # Create an ID for myself for logging purpose
-    my_id = uuid.uuid1()
-
     # Create Consumer instance
     consumer = Consumer(config)
-
-    # Create Cloud Logging client
-    logging_client = logging.Client(project='cdn-warming-poc')
-    logging_client.setup_logging()
-    logger = logging_client.logger("cdn-warming-consumer-kafka")
 
     # Set up a callback to handle the '--reset' flag.
     def reset_offset(consumer, partitions):
@@ -34,8 +27,7 @@ def main(args):
             consumer.assign(partitions)
 
     # Subscribe to topic
-    topic = "warming_urls"
-    consumer.subscribe([topic], on_assign=reset_offset)
+    consumer.subscribe([args.topic], on_assign=reset_offset)
 
     # Poll for new messages from Kafka and print them.
     try:
@@ -56,9 +48,8 @@ def main(args):
                 # make a get call to the url and capture the response
                 response = requests.get(url)
 
-                log_text = f"{my_id} - Status: {response.status_code}; File: {response.json()['args']['file']}"
+                log_text = f"URL called - Status: {response.status_code}; Response: {response.json()['args']['file']}"
                 print(log_text)
-                logger.log_text(log_text)
 
     except KeyboardInterrupt:
         pass
@@ -70,6 +61,9 @@ if __name__ == '__main__':
     # Parse the command line.
     parser = ArgumentParser()
     parser.add_argument('config_file', type=FileType('r'))
+    parser.add_argument('topic')
+    parser.add_argument('project_id')
     parser.add_argument('--reset', action='store_true')
 
     main(parser.parse_args())
+

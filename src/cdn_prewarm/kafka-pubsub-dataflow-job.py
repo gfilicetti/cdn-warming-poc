@@ -1,8 +1,10 @@
+# This script will create a Dataflow job that will watch on the Kafka topic and send any messages it finds to Pub/Sub
+# python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } { pubsub_topic } { project_id }
+# eg: python -m cdn_prewarm.kafka-pubsub-dataflow-job kafka-env cdn_warming cdn_warming cdn-warming-poc-project
 import datetime
 import warnings
 from argparse import ArgumentParser, FileType
 from configparser import ConfigParser
-
 import apache_beam as beam
 from apache_beam.io import WriteToPubSub
 from apache_beam.io.kafka import ReadFromKafka
@@ -17,13 +19,10 @@ def main(args):
 
     warnings.filterwarnings("ignore")
 
-    project_id="cdn-warming-poc"
-    bucket=f"gs://{project_id}"
+    bucket=f"gs://{args.project_id}"
     temp_location=f"{bucket}/temp"
     staging_location=f"{bucket}/staging"
     region="us-central1"
-    kafka_topic="warming_urls"
-    pubsub_topic="warming_urls"
 
     options=PipelineOptions([
         "--runner=DataflowRunner", 
@@ -31,7 +30,7 @@ def main(args):
         "--experiment=use_unsupported_python_version",
         "--dataflow_service_options=enable_prime",
         "--streaming",
-        f"--project={project_id}", 
+        f"--project={args.project_id}", 
         f"--region={region}", 
         f"--temp_location={temp_location}", 
         f"--staging_location={staging_location}"])
@@ -69,7 +68,9 @@ if __name__ == '__main__':
 
     # the full path, like: 'projects/cdn-warming-poc/topics/warming_urls'
     parser.add_argument('pubsub_topic')
-    args = parser.parse_args()
 
-    main(args)
+    # your Google Cloud project name
+    parser.add_argument('project_id')
+
+    main(parser.parse_args())
 
