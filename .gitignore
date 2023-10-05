@@ -1,5 +1,5 @@
 .venv
-kafka-env
+kafka-env-*
 keys*
 bootstrap.py
 *.ini

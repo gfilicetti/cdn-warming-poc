@@ -1,0 +1,15 @@
+[default]
+# These came from the Confluent Cloud install
+bootstrap.servers={ Kafka Server and Port here }
+sasl.username={ Kafka Username here }
+sasl.password={ Kafka Password here }
+security.protocol=SASL_SSL
+sasl.mechanisms=PLAIN
+
+[consumer]
+group.id=cdn_prewarm_group
+
+# 'auto.offset.reset=earliest' to start reading from the beginning of
+# the topic if no committed offsets exist.
+# 'auto.offset.reset=latest' to start reading from the next message
+auto.offset.reset=latest
