@@ -13,10 +13,16 @@ from threading import Thread
 
 app = Flask(__name__)
 
+def getInstanceId():
+    response = requests.get('http://metadata.google.internal/computeMetadata/v1/instance/id', headers={"Metadata-Flavor": "Google"})
+    return response.text
+
+instance_id = getInstanceId()
+
 @app.route("/", methods=["POST"])
 def main():
 
-    print(f"1. Top of main, host: {socket.gethostname()}")
+    print(f"1. Top of main, instance: {instance_id}")
 
     # Create an ID for myself for logging purpose
     my_id = uuid.uuid1()
