@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script will create a subscription to the passed in topic with the given name
-# pubsub-create-sub.sh {new_sub_name} {topic_name} {cloudrun_endpoint_url} {project_name}
+# pubsub-create-sub.sh {cloudrun_endpoint_url} {new_sub_name} {topic_name} {project_name}
 
 ENDPOINT=${1:-"-- MUST HAVE ENDPOINT --"}
 SUB=${2:-"us-central1"}
