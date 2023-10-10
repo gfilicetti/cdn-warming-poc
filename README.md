@@ -45,7 +45,7 @@ You will need to set up an Artifact registry for Docker that will hold the conta
 
 In the Google Cloud Console, go to **Artifact Registry** and click the **+** button to create a new registry
 
-Select type **Docker**, give it a name and pick a region (eg: us-east4) and click the **Create** button.
+Select type **Docker**, give it a name and pick a region (eg: `us-east4`) and click the **Create** button.
 
 Now click into the new registry from the list of registries and you will see the path of this new registry at the top. Click the **Copy** button and you will have a value like this in your clipboard:
 
@@ -58,11 +58,11 @@ Next we'll set up a Cloud Build that will build from this repository's code, cre
 
 Go to **Cloud Build** and click on **Repositories** on the left hand side. Click the **2ND GEN** tab at the top.
 
-Click **Create Host Connection** in the middle of the screen. On the next page select **GitHub** on the left side and then pick a **Region** (eg: *us-east4*) and give it a name (eg: *github-us-east4*) then click the **Connect** button at the bottom.
+Click **Create Host Connection** in the middle of the screen. On the next page select **GitHub** on the left side and then pick a **Region** (eg: `us-east4`) and give it a name (eg: `github-us-east4`) then click the **Connect** button at the bottom.
 
 Back at the **Repositories / 2ND GEN** screen, click **Link Repository** in the middle of the screen. Select the connection you just created and pick the **{your github username}/cdn-warming-poc** repository, click the **Link** button to create the link.
 
-Now click on **Triggers** on the left hand side and click the **Create a Trigger** button in the middle of the screen. Give it a **Name** and **Region** (eg: us-west4, must match the Repository Link we just created).
+Now click on **Triggers** on the left hand side and click the **Create a Trigger** button in the middle of the screen. Give it a **Name** and **Region** (eg: `us-west4`, must match the Repository Link we just created).
 
 Pick your **Event**, you can choose *Push to a branch* or *Manual invocation* or whatever you want.
 
