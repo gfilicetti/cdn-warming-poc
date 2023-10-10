@@ -7,6 +7,11 @@ This project showcases taking messages containing a URL from a Kafka topic, tran
 1. We show that Pub/Sub push will scale Cloud Run instances to deal with all the messages coming through
 1. We show how a Dataflow job can be used to get messages from Kafka and send them to Pub/Sub
 
+## Architecture
+This is a high-level architecture of an installation of a Regional CDN Warming system using Kafka, Dataflow, Pub/Sub and Cloud Run
+
+![High-level Architecture](images/arch-regional-url-warming.png)
+
 ## Setup & Installation
 > **NOTE:** We're assuming that your environment will be the Google Cloud Shell which already has the necessary tooling. If you're using your own machine, you'll have some installs to do
 
