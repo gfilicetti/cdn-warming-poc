@@ -1,7 +1,7 @@
 # cdn-warming-poc
 
 ## Introduction
-This project showcases taking messages containing a URL from a Kafka topic, translating them into pub/sub messages and then using push subscriptions to invoke Cloud Run instances to process the messages, take the URL and make a GET call to the url.
+This project showcases taking messages containing a URL from a Kafka topic, translating them into Pub/Sub messages and then using push subscriptions to invoke Cloud Run instances to process the messages, take the URL and make a GET call to the url.
 
 ## Goals
 1. We show that Pub/Sub push will scale Cloud Run instances to deal with all the messages coming through
@@ -40,6 +40,36 @@ We'll be using a virtual environment to keep things neat and tidy for our Python
     pip install -r ./requirements.txt
     ```
 
+### Setting up Artifact Registry
+You will need to set up an Artifact registry for Docker that will hold the container image for our python code.
+
+In the Google Cloud Console, go to **Artifact Registry** and click the **+** button to create a new registry
+
+Select type **Docker**, give it a name and pick a region (eg: us-east4) and click the **Create** button.
+
+Now click into the new registry from the list of registries and you will see the path of this new registry at the top. Click the **Copy** button and you will have a value like this in your clipboard:
+
+> `us-east4-docker.pkg.dev/my-project/registry-docker`
+
+### Setting up Cloud Build
+Next we'll set up a Cloud Build that will build from this repository's code, create Docker container image and upload it to Artifact Registry.
+
+> **NOTE:** You will need to make your own fork of this Github repository so that you can change `cloudbuild.yaml`. Edit the `cloudbuild.yaml` file at the root of this project and change the paths to match your Artifact Registry path above. (**NOTE:** You can use the `$PROJECT_ID` variable in your URL, eg: `us-east4-docker.pkg.dev/$PROJECT_ID/registry-docker/cdn-prewarm-pubsub:latest`).
+
+Go to **Cloud Build** and click on **Repositories** on the left hand side. Click the **2ND GEN** tab at the top.
+
+Click **Create Host Connection** in the middle of the screen. On the next page select **GitHub** on the left side and then pick a **Region** (eg: *us-east4*) and give it a name (eg: *github-us-east4*) then click the **Connect** button at the bottom.
+
+Back at the **Repositories / 2ND GEN** screen, click **Link Repository** in the middle of the screen. Select the connection you just created and pick the **{your github username}/cdn-warming-poc** repository, click the **Link** button to create the link.
+
+Now click on **Triggers** on the left hand side and click the **Create a Trigger** button in the middle of the screen. Give it a **Name** and **Region** (eg: us-west4, must match the Repository Link we just created).
+
+Pick your **Event**, you can choose *Push to a branch* or *Manual invocation* or whatever you want.
+
+For **Source** pick **2nd gen**, then pick the **Repository** we just created. (If you're triggering based on Push to Branch, it will default to using the *main* branch).
+
+Leave the rest of the defaults and click the **Create** button to make this Cloud Build trigger.
+
 ### Setting up Pub/Sub
 You will need to create the Pub/Sub topic, as well as a Service Account to invoke Cloud Run from Pub/Sub message pushes. 
 
@@ -48,23 +78,51 @@ Run the following command with whatever substitutions you want:
 ```bash
 ./scripts/pubsub-setup.sh { topic_name } 
 ```
-`topic_name`: The name of a new Pub/Sub topic, eg: `cdn_warming`
+- `topic_name`: The name of a new Pub/Sub topic, eg: `cdn_warming`
 
-### Setting up Artifact Registry
-> Need to create an Artifact registry for docker and get its URL, eg: `us-central1-docker.pkg.dev/cdn-warming-poc/registry-docker`
+### Creating Cloud Run Instances and Pub/Sub Subscriptions
+The next two steps you will need to repeat for every region you want Cloud Run instances to run.
 
-### Setting up Cloud Build trigger
-> Need to set up Cloud Build to point to ./cloudbuild-pubsub.yaml (or rename it) and use the artifact registry URL (which might be hardcoded in the file)
+#### Create Cloud Run Instances
+To create the Cloud Run instance, we have a shell script to help you, run it like so:
 
-> Need to set up a 2nd gen source repo connection to this repository.
+```bash
+create-cloudrun.sh {cloudrun_service_name} {region} {full_image_path}
+```
+- `cloudrun_service_name`: The name of the new Cloud Run service, eg: `cdn-prewarm-us-east4` 
+- `region`: The region this Cloud Run service will be based in, eg: `us-east4`
+- `full_image_path`: The full path to the Docker image used for this Cloud Run service, eg: `us-east4-docker.pkg.dev/my_project/registry-docker/cdn-prewarm-pubsub`
 
-> Need to hook up the trigger to this source repo and set it to manual invocation.
+This script runs some `gcloud` commands and when finished will output the new Cloud Run service's endpoint URL, eg: `https://cdn-prewarm-us-east4-7xxxk6gxsq-uc.a.run.app`
 
-### Create Cloud Run Instances
-> How to run the `create-cloudrun.sh` and copy the endpoint url
+#### Create Pub/Sub Push Subscriptions
+Next we will create a Pub/Sub push subscription to our `warming_urls` topic and use the endpoint URL of the new Cloud Run service to receive the push notifications of new messages.
 
-### Create Subscriptions
-> How to run the `pubsub-create-sub.sh` and pass in the endpoint url of the Cloud Run to push to
+Run the shell script like so:
+
+```bash
+pubsub-create-sub.sh {cloudrun_endpoint_url} {new_sub_name} {topic_name}
+```
+- `cloudrun_endpoint_url`: The endpoint of the new Cloud Run service generated above, eg: `https://cdn-prewarm-us-east4-7xxxk6gxsq-uc.a.run.app`
+- `new_sub_name`: The name of this subscription, eg: `us-east4-sub`
+- `topic_name`: The name of the Pub/Sub topic created above, eg: `warming_urls`
 
 ## Running The Demo
-> Generally you, produce messages, watch the logs for print out, watch the instance count for each cloud run, look at the uniqueness of the container IDs
+Now we're ready to run the demo, we will produce Kafka messages which trigger the following high-level flow:
+
+1. A Kafka message containing the URL to GET sent to the Kafka topic.
+1. A Dataflow pipeline will poll the Kafka topic and if a message is found, it will create a Pub/Sub message containing the same URL and add it to the Pub/Sub topic.
+1. All subscriptions listening to the Pub/Sub topic will trigger and create a new Cloud Run instance to process the message.
+1. The Cloud Run python code will read the message, extract the URL and make a GET call to it.
+1. Cloud Run will scale up to handle all the messages coming in as needed. 
+
+The above is achieved using these files in this repository: 
+
+1. N number of Kafka messages containing random URLs are created with `producer.py`
+1. The Dataflow pipeline implementation is in `kafka-pubsub-dataflow-job`
+1. Cloud Run instances execute the python code in `consumer-pubsub.py`
+
+> **NOTE**: The `consumer-kafka.py` is just a helper program that can be used to consume messages directly from the Kafka topic and make the GET calls to the URLs. This is included for testing purposes only.
+
+## Contributors
+- Gino Filicetti
