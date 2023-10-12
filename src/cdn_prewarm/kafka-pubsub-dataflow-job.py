@@ -1,6 +1,6 @@
 # This script will create a Dataflow job that will watch on the Kafka topic and send any messages it finds to Pub/Sub
-# python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } { pubsub_topic } { project_id }
-# eg: python -m cdn_prewarm.kafka-pubsub-dataflow-job kafka-env cdn_warming cdn_warming cdn-warming-poc-project
+# python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } { pubsub_topic } { project_id } { region }
+# eg: python -m cdn_prewarm.kafka-pubsub-dataflow-job kafka-env cdn_warming cdn_warming cdn-warming-poc-project us-central1
 import datetime
 import warnings
 from argparse import ArgumentParser, FileType
@@ -22,7 +22,6 @@ def main(args):
     bucket=f"gs://{args.project_id}"
     temp_location=f"{bucket}/temp"
     staging_location=f"{bucket}/staging"
-    region="us-central1"
 
     options=PipelineOptions([
         "--runner=DataflowRunner", 
@@ -31,7 +30,7 @@ def main(args):
         "--dataflow_service_options=enable_prime",
         "--streaming",
         f"--project={args.project_id}", 
-        f"--region={region}", 
+        f"--region={args.region}", 
         f"--temp_location={temp_location}", 
         f"--staging_location={staging_location}"])
 
@@ -71,6 +70,9 @@ if __name__ == '__main__':
 
     # your Google Cloud project name
     parser.add_argument('project_id')
+
+    # the region you want to create the pipeline in
+    parser.add_argument('region', default="us-central1")
 
     main(parser.parse_args())
 

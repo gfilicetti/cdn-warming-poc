@@ -18,7 +18,7 @@ This is a high-level architecture of an installation of a Regional CDN Warming s
 ### Setting up Kafka
 For ease of use, get a free trial instance of Kafka from Confluent. You will need to fill in the information for instance and username/password in the `kafka-env` file.
 
-In your Kafka environment set up a topic, eg: `cdn_warming`.  You'll need this value later.
+In your Kafka environment set up a topic, eg: `warming_urls`.  You'll need this value later.
 
 ### Setting up your Python environment
 We'll be using a virtual environment to keep things neat and tidy for our Python code.
@@ -83,7 +83,25 @@ Run the following command with whatever substitutions you want:
 ```bash
 ./scripts/pubsub-setup.sh { topic_name } 
 ```
-- `topic_name`: The name of a new Pub/Sub topic, eg: `cdn_warming`
+- `topic_name`: The name of a new Pub/Sub topic, eg: `warming_urls`
+
+### Starting the Dataflow Pipeline
+We need a Dataflow pipeline that will poll Kafka and if messages are found it will recreate those messages on the Pub/Sub topic.
+
+We have a python script that will create this pipeline and start it running. It will run until you manually stop it in the console.
+
+```bash
+python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } { pubsub_topic } { project_id } { region }
+```
+- `config_file`: The name of the file containing your Kafka credentials, eg: `kafka-env`
+- `kafka_topic`: The name of the Kafka topic to watch, eg: `warming_urls`
+- `pubsub_topic`: The name of the Pub/Sub topic to watch, eg: `warming_urls`
+- `project_id`: The name of your Google Cloud project, eg: `cdn-warming-poc`
+- `region`: The region you want to create the Pipeline in, eg: `us-central1`
+
+Once this script runs and returns, you can see the new pipeline in the console by going to **Dataflow** and looking at the **Jobs** screen. 
+
+> **Note** You should stop jobs when you're not actively working. To start a new job, run the script again. Stopped jobs can not be restarted.
 
 ### Creating Cloud Run Instances and Pub/Sub Subscriptions
 The next two steps you will need to repeat for every region you want Cloud Run instances to run.
@@ -125,6 +143,7 @@ The above is achieved using these files in this repository:
 
 1. N number of Kafka messages containing random URLs are created with `producer.py`
 1. The Dataflow pipeline implementation is in `kafka-pubsub-dataflow-job`
+    - It should already be running if you followed the instructions above.
 1. Cloud Run instances execute the python code in `consumer-pubsub.py`
 
 > **NOTE**: The `consumer-kafka.py` is just a helper program that can be used to consume messages directly from the Kafka topic and make the GET calls to the URLs. This is included for testing purposes only.
