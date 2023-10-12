@@ -1,6 +1,6 @@
 # This script will create a Dataflow job that will watch on the Kafka topic and send any messages it finds to Pub/Sub
 # python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } { pubsub_topic } { project_id } { region }
-# eg: python -m cdn_prewarm.kafka-pubsub-dataflow-job kafka-env cdn_warming cdn_warming cdn-warming-poc-project us-central1
+# eg: python -m cdn_prewarm.kafka-pubsub-dataflow-job kafka-env warming_urls projects/cdn-warming-poc/topics/warming_urls cdn-warming-poc-project us-central1
 import datetime
 import warnings
 from argparse import ArgumentParser, FileType
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument('project_id')
 
     # the region you want to create the pipeline in
-    parser.add_argument('region', default="us-central1")
+    parser.add_argument('region')
 
     main(parser.parse_args())
 

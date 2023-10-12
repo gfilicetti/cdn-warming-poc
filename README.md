@@ -95,7 +95,7 @@ python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } 
 ```
 - `config_file`: The name of the file containing your Kafka credentials, eg: `kafka-env`
 - `kafka_topic`: The name of the Kafka topic to watch, eg: `warming_urls`
-- `pubsub_topic`: The name of the Pub/Sub topic to watch, eg: `warming_urls`
+- `pubsub_topic`: The full path of the Pub/Sub topic to watch, eg: `projects/cdn-warming-poc/topics/warming_urls`
 - `project_id`: The name of your Google Cloud project, eg: `cdn-warming-poc`
 - `region`: The region you want to create the Pipeline in, eg: `us-central1`
 
