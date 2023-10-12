@@ -90,6 +90,8 @@ We need a Dataflow pipeline that will poll Kafka and if messages are found it wi
 
 We have a python script that will create this pipeline and start it running. It will run until you manually stop it in the console.
 
+> **Note** The script will run and then block. This is expected. You can hit Ctrl-C and the job will continue to run and be visible in the console. 
+
 ```bash
 python -m cdn_prewarm.kafka-pubsub-dataflow-job { config_file } { kafka_topic } { pubsub_topic } { project_id } { region }
 ```
