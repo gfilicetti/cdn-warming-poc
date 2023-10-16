@@ -1,7 +1,7 @@
-# cdn-warming-poc
+# Distributed Generic CDN Warming PoC
 
 ## Introduction
-This project showcases taking messages containing a URL from a Kafka topic, translating them into Pub/Sub messages and then using push subscriptions to invoke Cloud Run instances to process the messages, take the URL and make a GET call to the url.
+This project showcases taking messages containing a URL from a Kafka topic, translating them into Pub/Sub messages and then using push subscriptions to invoke Cloud Run instances across any number of regions to process the messages, take the URL and make a GET call to the url, thus hitting the local CDN and having it cache that URL from the origin.
 
 ## Goals
 1. We show that Pub/Sub push will scale Cloud Run instances to deal with all the messages coming through
